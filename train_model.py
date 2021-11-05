@@ -30,13 +30,13 @@ def get_activation():
 
 
 def CNN(X_train, Y_train, X_test, Y_test, train=True, ver=True):
-    width, height = parameters.WIDTH, parameters.HEIGHT
+    width, height = parameters.WIDTH, parameters.HEIGHT * 2
     print("width =", width, "  height =", height)
     Y_test, Y_train = to_categorical(Y_test, num_classes=parameters.CLASS_NUM), \
                                 to_categorical(Y_train, num_classes=parameters.CLASS_NUM)
     X_train = np.expand_dims(X_train, axis=3)
     X_test = np.expand_dims(X_test, axis=3)
-    load_data.display_info(X_train, Y_train, Y_test, Y_test)
+    load_data.display_info(X_train, Y_train, X_test, Y_test)
     init_time = time.time()
     if train:
         TrainCnnModel(np.array(X_train), Y_train, width, height, np.array(X_test), Y_test)
@@ -53,6 +53,15 @@ def TrainCnnModel(x_train, y_train, width, height, x_test, y_test, big=False, ex
     model.add(Dense(512))
     model.add(Activation('relu'))
     model.add(Dropout(0.2))
+    model.add(Dense(1024))
+    model.add(Activation('relu'))
+    # model.add(Dropout(0.2))
+    # model.add(Dense(2048))
+    # model.add(Activation('relu'))
+    model.add(Dropout(0.2))
+    model.add(Dense(1024))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.2))
     model.add(Dense(512))
     model.add(Activation('relu'))
     model.add(Dropout(0.2))
@@ -62,6 +71,7 @@ def TrainCnnModel(x_train, y_train, width, height, x_test, y_test, big=False, ex
     early_stopping = EarlyStopping(monitor='val_accuracy', min_delta=0.0001, patience=25, mode='max')
     history = model.fit(x_train, y_train, batch_size=16, epochs=epoch_num, verbose=1,
                         callbacks=[early_stopping], validation_data=(x_test, y_test), shuffle=True)
+    print(model.summary())
 
     plt.plot(history.history['accuracy'])
     plt.plot(history.history['val_accuracy'])
@@ -71,7 +81,8 @@ def TrainCnnModel(x_train, y_train, width, height, x_test, y_test, big=False, ex
     plt.legend(['Train', 'Test'], loc='upper left')
     plt.show()
 
-    history.history['accuracy'][0] = min(1.0, history.history['accuracy'][0])
+    history.history['val_loss'][0] = min(2.0, history.history['val_loss'][0])
+    history.history['loss'][0] = min(2.0, history.history['loss'][0])
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
     plt.title('Model loss')

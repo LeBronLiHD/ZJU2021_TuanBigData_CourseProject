@@ -66,7 +66,7 @@ def poly_fit(data_piece):
     data_piece = np.array(data_piece)
     data_t = data_piece.T
     x = [i for i in range(len(data_t[0]))]
-    new_piece = np.zeros((parameters.WIDTH, parameters.HEIGHT))
+    new_piece = np.zeros((parameters.WIDTH, parameters.HEIGHT * 2))
     for i in range(len(data_t)):
         y = data_t[i][:]
         coe = np.polyfit(x, y, 5)
@@ -74,6 +74,7 @@ def poly_fit(data_piece):
         for j in range(parameters.WIDTH):
             x_value = j * (len(data_t[0])/parameters.WIDTH)
             new_piece[j][i] = poly(x_value)
+            new_piece[j][i + parameters.HEIGHT] = poly(x_value)
     return new_piece
 
 

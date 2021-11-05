@@ -6,6 +6,7 @@ __pycache__/
 test/
 train/
 tuan_files_of_old_version/
+model/
 
 # C extensions
 *.so
