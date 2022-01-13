@@ -7,6 +7,7 @@ test/
 train/
 tuan_files_of_old_version/
 model/
+.idea/
 
 # C extensions
 *.so
